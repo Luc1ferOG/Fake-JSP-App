@@ -102,7 +102,7 @@ const ChatScreen = () => {
   const renderMessages = () => {
     let lastDate = '';
     return messages.map((message) => {
-      const messageDate = message.timestamp.split(' at ')[0];
+      const messageDate = message.timestamp;
       const showDate = messageDate !== lastDate;
       lastDate = messageDate;
 
