@@ -17,7 +17,7 @@ interface Message {
   id: string;
   text: string;
   user: 'me' | 'other';
-  timestamp: string;
+  timestamp: number;
 }
 
 const initialMessages: Message[] = [];
@@ -78,7 +78,7 @@ const ChatScreen = () => {
       id: String(messages.length + 1),
       text: `Купивте билет за едно возење со цена од 40ден на ${formattedDateTime} часот.`,
       user: 'other',
-      timestamp: formatDate(now),
+      timestamp: now.getTime(),
     };
     setMessages([...messages, newMessage]);
   };
@@ -92,7 +92,7 @@ const ChatScreen = () => {
       id: String(messages.length + 1),
       text: inputText,
       user: 'me',
-      timestamp: formatDate(new Date()),
+      timestamp: new Date().getTime(),
     };
 
     setMessages([...messages, newMessage]);
@@ -100,21 +100,27 @@ const ChatScreen = () => {
   };
 
   const renderMessages = () => {
-    let lastDate = '';
     return messages.map((message, index) => {
-      const messageDate = message.timestamp.split(' at ')[0];
-      const messageTime = message.timestamp.split(' at ')[1];
+      const messageDate = new Date(message.timestamp);
       
       const prevMessage = messages[index - 1];
-      const prevMessageDate = prevMessage ? prevMessage.timestamp.split(' at ')[0] : '';
+      let showDate = true;
 
-      const showDate = messageDate !== prevMessageDate;
+      if (prevMessage) {
+        const prevMessageDate = new Date(prevMessage.timestamp);
+        const timeDifference = messageDate.getTime() - prevMessageDate.getTime();
+        const minutesDifference = timeDifference / (1000 * 60);
+
+        if (minutesDifference < 2) {
+          showDate = false;
+        }
+      }
 
       return (
         <View key={message.id}>
           {showDate && (
             <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>{`${messageDate} at ${messageTime}`}</Text>
+              <Text style={styles.dateText}>{formatDate(messageDate)}</Text>
             </View>
           )}
           <View
