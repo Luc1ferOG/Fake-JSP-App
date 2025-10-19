@@ -4,13 +4,13 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 interface Message {
@@ -38,7 +38,7 @@ const ChatScreen = () => {
   const [inputText, setInputText] = useState('');
 
   useEffect(() => {
-    // loadMessages();
+    loadMessages();
   }, []);
 
   useEffect(() => {
@@ -65,11 +65,19 @@ const ChatScreen = () => {
   };
 
   const handleAddButtonPress = () => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const formattedDateTime = `${day}.${month}.${year} ${hours}:${minutes}`;
+
     const newMessage: Message = {
       id: String(messages.length + 1),
-      text: 'This is a pre-generated message from the other user.',
+      text: `Купивте билет за едно возење со цена од 40ден на ${formattedDateTime} часот.`,
       user: 'other',
-      timestamp: formatDate(new Date()),
+      timestamp: formatDate(now),
     };
     setMessages([...messages, newMessage]);
   };
