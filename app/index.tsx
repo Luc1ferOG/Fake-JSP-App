@@ -101,16 +101,20 @@ const ChatScreen = () => {
 
   const renderMessages = () => {
     let lastDate = '';
-    return messages.map((message) => {
-      const messageDate = message.timestamp;
-      const showDate = messageDate !== lastDate;
-      lastDate = messageDate;
+    return messages.map((message, index) => {
+      const messageDate = message.timestamp.split(' at ')[0];
+      const messageTime = message.timestamp.split(' at ')[1];
+      
+      const prevMessage = messages[index - 1];
+      const prevMessageDate = prevMessage ? prevMessage.timestamp.split(' at ')[0] : '';
+
+      const showDate = messageDate !== prevMessageDate;
 
       return (
         <View key={message.id}>
           {showDate && (
             <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>{messageDate}</Text>
+              <Text style={styles.dateText}>{`${messageDate} at ${messageTime}`}</Text>
             </View>
           )}
           <View
