@@ -108,10 +108,12 @@ const ChatScreen = () => {
 
       if (prevMessage) {
         const prevMessageDate = new Date(prevMessage.timestamp);
-        const timeDifference = messageDate.getTime() - prevMessageDate.getTime();
-        const minutesDifference = timeDifference / (1000 * 60);
-
-        if (minutesDifference < 2) {
+        
+        if (messageDate.getFullYear() === prevMessageDate.getFullYear() &&
+            messageDate.getMonth() === prevMessageDate.getMonth() &&
+            messageDate.getDate() === prevMessageDate.getDate() &&
+            messageDate.getHours() === prevMessageDate.getHours() &&
+            messageDate.getMinutes() === prevMessageDate.getMinutes()) {
           showDate = false;
         }
       }
