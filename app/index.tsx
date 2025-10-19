@@ -284,14 +284,10 @@ const styles = StyleSheet.create({
   },
   headerIcons: {
     flexDirection: 'row',
-    position: 'absolute',
-    top: '100%',
-    transform: [{ translateY: -50 }],
-    left: 0,
-    right: 0,
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     width: '100%',
+    alignItems: 'center',
   },
   headerIcon: {
     padding: 8,
