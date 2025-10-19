@@ -4,14 +4,14 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Message {
   id: string;
@@ -34,6 +34,7 @@ const formatDate = (date: Date) => {
 };
 
 const ChatScreen = () => {
+  const insets = useSafeAreaInsets();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
 
@@ -137,83 +138,88 @@ const ChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.messagesContainer}
-        contentContainerStyle={styles.messagesContentContainer}
-      >
-        {renderMessages()}
-      </ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.messagesContainer}
+          contentContainerStyle={styles.messagesContentContainer}
+        >
+          {renderMessages()}
+        </ScrollView>
 
-      <LinearGradient
-        colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.5)', 'transparent']}
-        style={styles.headerGradient}
-        pointerEvents="none"
-      />
+        <LinearGradient
+          colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.5)', 'transparent']}
+          style={styles.headerGradient}
+          pointerEvents="none"
+        />
 
-      <View style={styles.header}>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.headerButton}>
-            <Ionicons name="chevron-back" size={28} color="#FFFFFF" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <BlurView intensity={20} tint="dark" style={styles.headerIcon} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.contactInfo}>
-          <LinearGradient
-            colors={['#6A5ACD', '#483D8B']}
-            style={styles.avatar}
-          >
-            <Text style={styles.avatarText}>J</Text>
-          </LinearGradient>
-          <View style={styles.nameplate}>
-            <Text style={styles.contactName}>JSP</Text>
-            <View style={{ flex: 1 }} />
-            <Ionicons name="chevron-forward" size={16} color="rgba(255, 255, 255, 0.6)" />
+        <View style={[styles.header, { paddingTop: insets.top + 5 }]}>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity style={styles.headerButton}>
+              <Ionicons name="chevron-back" size={28} color="#FFFFFF" />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <BlurView intensity={20} tint="dark" style={styles.headerIcon} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.contactInfo}>
+            <LinearGradient
+              colors={['#6A5ACD', '#483D8B']}
+              style={styles.avatar}
+            >
+              <Text style={styles.avatarText}>J</Text>
+            </LinearGradient>
+            <View style={styles.nameplate}>
+              <Text style={styles.contactName}>JSP</Text>
+              <View style={{ flex: 1 }} />
+              <Ionicons name="chevron-forward" size={16} color="rgba(255, 255, 255, 0.6)" />
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.inputArea}>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddButtonPress}>
-          <Ionicons name="add" size={28} color="#8E8E93" />
-        </TouchableOpacity>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Text Message • SMS"
-            placeholderTextColor="#8E8E93"
-            value={inputText}
-            onChangeText={setInputText}
-          />
-          {inputText.length === 0 && (
-            <TouchableOpacity style={styles.micButton}>
-              <Ionicons name="mic" size={24} color="#8E8E93" />
+        <View style={[styles.inputArea, { paddingBottom: insets.bottom || 15 }]}>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddButtonPress}>
+            <Ionicons name="add" size={28} color="#8E8E93" />
+          </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Text Message • SMS"
+              placeholderTextColor="#8E8E93"
+              value={inputText}
+              onChangeText={setInputText}
+            />
+            {inputText.length === 0 && (
+              <TouchableOpacity style={styles.micButton}>
+                <Ionicons name="mic" size={24} color="#8E8E93" />
+              </TouchableOpacity>
+            )}
+          </View>
+          {inputText.length > 0 && (
+            <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+              <Ionicons name="arrow-up-circle" size={32} color="#007AFF" />
             </TouchableOpacity>
           )}
         </View>
-        {inputText.length > 0 && (
-          <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-            <Ionicons name="arrow-up-circle" size={32} color="#007AFF" />
-          </TouchableOpacity>
-        )}
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  container: {
+    flex: 1,
+    // backgroundColor is now handled by safeArea
   },
   header: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    paddingTop: 40,
     paddingBottom: 5,
     alignItems: 'center',
     zIndex: 10,
@@ -279,7 +285,8 @@ const styles = StyleSheet.create({
   headerIcons: {
     flexDirection: 'row',
     position: 'absolute',
-    top: 45,
+    top: '100%',
+    transform: [{ translateY: -50 }],
     left: 0,
     right: 0,
     justifyContent: 'space-between',
@@ -343,7 +350,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 8,
-    paddingBottom: 30, // Extra padding for home indicator area
     backgroundColor: '#000000',
     borderTopWidth: 1,
     borderTopColor: '#333333',

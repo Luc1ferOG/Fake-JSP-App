@@ -27,7 +27,11 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "backgroundColor": "#000000",
+      "meta": {
+        "viewport": "width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover"
+      }
     },
     "plugins": [
       "expo-router",
