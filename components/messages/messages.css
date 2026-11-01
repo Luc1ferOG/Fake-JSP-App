@@ -1,0 +1,499 @@
+/* Shared iOS Messages design tokens. */
+:root {
+  --ios-bg: #000;
+  --ios-incoming: #262629;
+  --ios-outgoing: #30d158;
+  --ios-text: #fff;
+  --ios-secondary: #8e8e93;
+  --ios-blue: #0a84ff;
+  --ios-group: #1c1c1e;
+  --ios-divider: #38383a;
+  --radius: 10px;
+  --bubble-radius: 19px;
+  --bubble-font: 17px;
+  --space: 8px;
+  --motion: 180ms;
+  --system-font:
+    -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
+}
+.messages-app,
+.messages-app * {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--ios-bg);
+}
+.messages-app {
+  color: var(--ios-text);
+  font: 13px/1.5 var(--system-font);
+  display: flex;
+  height: var(--visual-height, 100dvh);
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  color-scheme: dark;
+}
+.messages-app button,
+.messages-app input,
+.messages-app textarea,
+.messages-app select {
+  font: inherit;
+}
+.messages-app button {
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.messages-app button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.messages-app button,
+.messages-app a,
+.messages-app input,
+.messages-app textarea,
+.messages-app select,
+.messages-app summary {
+  -webkit-tap-highlight-color: transparent;
+}
+.messages-app :focus-visible {
+  outline: 2px solid var(--ios-blue);
+  outline-offset: 3px;
+}
+.messages-app input,
+.messages-app textarea,
+.messages-app select {
+  color: inherit;
+  min-width: 0;
+}
+.messages-app input::placeholder,
+.messages-app textarea::placeholder {
+  color: #696b75;
+  opacity: 1;
+}
+.messages-app svg {
+  flex-shrink: 0;
+}
+.messages-app h1,
+.messages-app h2,
+.messages-app h3,
+.messages-app p {
+  margin: 0;
+}
+.iphone {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--ios-bg);
+  color: var(--ios-text);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  isolation: isolate;
+  font-family: var(--system-font);
+}
+
+.message-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 12px 15px;
+  scrollbar-width: none;
+}
+.message-scroll::-webkit-scrollbar {
+  display: none;
+}
+.sms-caption {
+  color: var(--ios-secondary);
+  text-align: center;
+  font-size: 11px;
+  margin: 18px 0 5px;
+}
+.message-date {
+  color: var(--ios-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  margin: 17px 0 10px;
+}
+.message-date span {
+  font-weight: 400;
+}
+.message-row {
+  display: flex;
+  margin-top: 3px;
+  padding: 0 2px;
+  animation: message-in var(--motion) ease-out;
+}
+.message-row.new-group {
+  margin-top: 9px;
+}
+.message-row.outgoing {
+  justify-content: flex-end;
+}
+.bubble {
+  position: relative;
+  border-radius: var(--bubble-radius);
+  max-width: 79%;
+  font-size: var(--bubble-font);
+  line-height: 1.28;
+  padding: 8px 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--ios-incoming);
+  z-index: 0;
+}
+.outgoing .bubble {
+  background: var(--ios-outgoing);
+}
+.bubble.tail:before {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  width: 15px;
+  height: 19px;
+  z-index: -1;
+  background: inherit;
+}
+.incoming .bubble.tail:before {
+  left: -5px;
+  border-radius: 0 0 14px 0;
+}
+.outgoing .bubble.tail:before {
+  right: -5px;
+  border-radius: 0 0 0 14px;
+}
+.bubble.tail:after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  width: 9px;
+  height: 21px;
+  background: var(--ios-bg);
+}
+.incoming .bubble.tail:after {
+  left: -9px;
+  border-radius: 0 0 12px 0;
+}
+.outgoing .bubble.tail:after {
+  right: -9px;
+  border-radius: 0 0 0 12px;
+}
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 6px 13px 7px 11px;
+  background: #000;
+  flex-shrink: 0;
+}
+.messages-app .add-attachment {
+  background: #242426;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: #b0b0b5;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+.composer-field {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  border: 1px solid #39393b;
+  border-radius: 22px;
+  min-height: 37px;
+  padding: 3px 4px 3px 12px;
+  gap: 4px;
+}
+.composer textarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  background: transparent;
+  color: white;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  line-height: 23px;
+  padding: 2px 0;
+  min-height: 27px;
+  max-height: 115px;
+  field-sizing: content;
+}
+.composer textarea::placeholder {
+  color: #85858b;
+}
+.messages-app .send-button {
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  background: var(--ios-outgoing);
+  color: white;
+  flex-shrink: 0;
+}
+.messages-app .mic-button {
+  color: #a4a4ab;
+  padding: 2px 3px;
+  height: 28px;
+}
+.list-header {
+  padding: 15px 21px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 32px;
+  font-weight: 700;
+}
+.list-header button,
+.info-nav button {
+  color: var(--ios-blue);
+}
+.phone-search {
+  display: flex;
+  align-items: center;
+  margin: 0 16px 18px;
+  padding: 7px 10px;
+  gap: 7px;
+  background: var(--ios-group);
+  color: var(--ios-secondary);
+  border-radius: 10px;
+}
+.phone-search input {
+  background: transparent;
+  border: 0;
+  width: 100%;
+  font-size: 17px;
+}
+.phone-contact-list {
+  flex: 1;
+  overflow: auto;
+}
+.phone-empty {
+  padding: 25px;
+  color: var(--ios-secondary);
+  text-align: center;
+}
+.messages-app .contact-row {
+  display: flex;
+  text-align: left;
+  width: 100%;
+  padding: 15px 20px;
+  border-bottom: 0.5px solid var(--ios-divider);
+  gap: 12px;
+}
+.contact-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.contact-row strong {
+  font-size: 17px;
+}
+.contact-row p {
+  font-size: 14px;
+  color: var(--ios-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.contact-row svg {
+  color: var(--ios-secondary);
+}
+.contact-details {
+  flex: 1;
+  overflow: auto;
+  text-align: center;
+  padding: 0 17px;
+  background: #080808;
+}
+.info-nav {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px -10px 26px;
+}
+.info-nav button {
+  font-size: 17px;
+  min-height: 44px;
+  gap: 0;
+}
+.contact-details h1 {
+  font-size: 29px;
+  font-weight: 550;
+  margin: 12px 0 24px;
+  overflow-wrap: anywhere;
+}
+.contact-actions {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 24px;
+}
+.contact-actions button {
+  flex: 1;
+  flex-direction: column;
+  background: var(--ios-group);
+  border-radius: 10px;
+  color: var(--ios-blue);
+  padding: 12px;
+  gap: 5px;
+}
+.contact-actions span {
+  font-size: 11px;
+}
+.info-group {
+  border-radius: 11px;
+  background: var(--ios-group);
+  margin: 18px 0;
+  text-align: left;
+  padding: 12px 15px;
+  display: flex;
+  flex-direction: column;
+  font-size: 17px;
+  gap: 5px;
+}
+.info-group small {
+  font-size: 12px;
+  color: var(--ios-secondary);
+}
+.info-group > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.info-group button {
+  justify-content: flex-start;
+  color: var(--ios-blue);
+  padding: 6px 0;
+  min-height: 38px;
+}
+.info-group button + button {
+  border-top: 0.5px solid var(--ios-divider);
+}
+.info-group input {
+  accent-color: var(--ios-outgoing);
+  width: 38px;
+  height: 23px;
+}
+.info-footer {
+  color: var(--ios-secondary);
+  font-size: 11px;
+  text-align: center;
+  padding-bottom: 20px;
+}
+.phone-notice {
+  position: absolute;
+  bottom: 85px;
+  left: 20px;
+  right: 20px;
+  border-radius: 12px;
+  padding: 15px;
+  background: #323235f2;
+  font-size: 13px;
+  text-align: center;
+  box-shadow: 0 4px 20px #0008;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+.loading-screen {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+.loading-screen button,
+.storage-error button {
+  color: var(--ios-blue);
+  padding: 12px;
+}
+.storage-error {
+  position: fixed;
+  bottom: 90px;
+  left: 16px;
+  right: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #432a32;
+  z-index: 10;
+}
+@keyframes message-in {
+  from {
+    opacity: 0.5;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .messages-app * {
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.contact-avatar {
+  border: 0;
+  box-shadow: none;
+  vertical-align: middle;
+}
+.contact-avatar img {
+  border: 0;
+  box-shadow: none;
+}
+.contact-editor {
+  background: var(--ios-group);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: left;
+  margin: 20px 0;
+}
+.contact-editor > .contact-avatar {
+  display: flex !important;
+  margin: 0 auto 18px;
+}
+.contact-editor label {
+  display: block;
+  font-size: 13px;
+  color: var(--ios-secondary);
+  margin: 14px 0;
+}
+.contact-editor input {
+  display: block;
+  width: 100%;
+  background: #2c2c2e;
+  color: white;
+  border: 1px solid var(--ios-divider);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 6px;
+}
+.contact-editor button {
+  color: var(--ios-blue);
+  padding: 10px 0;
+}
+.contact-editor p {
+  color: #ff8a8a;
+  font-size: 13px;
+}

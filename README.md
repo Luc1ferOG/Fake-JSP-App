@@ -1,50 +1,46 @@
-# Welcome to your Expo app 👋
+# JSP Messages
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A full-browser iPhone Messages-style simulator built with the existing Expo SDK 54 app. No real SMS messages are sent.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+npm ci
+npm run web
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Use Node 22.18+ or 24. On Windows PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`.
 
-## Learn more
+The conversation fills the browser window. There is no device frame, fixed iPhone size, studio sidebar, or editor toolbar.
 
-To learn more about developing your project with Expo, look at the following resources:
+The chat header floats over the scrolling messages. Its background uses translucent backdrop blur, circular glass controls and a separate darker name capsule; the avatar remains crisp. Browsers without backdrop-filter support use translucent gradient surfaces instead.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The main contact is **JSP_bilet**. The conversation list also includes Daniel Sion Inter, Strezo Naafiri Fucker, Stefan Kolega, Tato and Mama, with fictional Macedonian messages from both sides. Existing messages and custom pictures are preserved; the old “New contact” entry is removed during the one-time contact update.
 
-## Join the community
+Every contact without a custom picture uses the same flat blue-gray SVG avatar with a white head and shoulders. Open a contact’s details and choose **Edit** to open the glass editing sheet. Photo changes, names, multiple phone numbers, emails, dates, addresses, tones and notes stay in a draft until you press the checkmark. The X button discards the draft. Custom pictures survive refreshes; images that cannot load display the default silhouette.
 
-Join our community of developers creating universal apps.
+Contact profiles include Info, Photos and Locations tabs. Empty tabs show empty states; only stored shared images or locations are displayed. Hide Alerts, Show in Shared with You and blocking are persistent local settings. Blocked contacts cannot generate incoming simulator messages. Show in Contacts opens a locally stored contact card.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Delete Contact requires confirmation and removes only the saved profile and photo. The conversation, ID and all messages remain, identified by the original phone number or “Unknown Contact.”
+
+Conversation rows show the bottom message in timeline order and sort by that message’s timestamp. Today shows its time, yesterday uses a relative label, the previous six calendar days use weekdays, and older/future dates show a full date. Messages from a different year always include their year. Formatting uses browser locale/time zone by default; saved `preferences.locale`, `preferences.timeZone` and `preferences.hour12` override those defaults.
+
+Press **+** to insert an incoming ticket message:
+
+```text
+Kupivte bilet za edno vozenje so cena od 40den na DD.MM.YYYY HH:mm chasot.
+```
+
+The date and time come from the moment you press the button, using your device's local timezone. The message timestamp uses that same captured moment. There is no simulated status bar or device frame.
+
+The composer adds outgoing messages. Enter sends; Shift+Enter adds a line. Click the contact header for details or the back chevron for existing conversations. Messages remain stored locally. Existing v2 data and legacy `chat_messages` data are preserved.
+
+```sh
+npm run typecheck
+npm run lint
+npm test
+npm run build:web
+node scripts/serve-preview.cjs
+```
+
+The static preview serves `dist` at http://127.0.0.1:8081. Vercel builds with `npm run build:web` and serves `dist`. Expo Router, existing dependency versions and static output are preserved.
+
+The full-browser interface targets web, including mobile browsers. Native builds retain the original React Native chat screen. Exact visual comparison to the Apple reference images and physical iPhone keyboard testing remain unverified.
