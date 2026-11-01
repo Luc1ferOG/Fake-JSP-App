@@ -1,0 +1,194 @@
+:root {
+  --chat-header-height: 108px;
+  --chat-header-blur-top: 16px;
+  --chat-header-blur-middle: 8px;
+  --chat-header-blur-bottom: 2px;
+  --chat-header-tint: rgba(0, 0, 0, 0.5);
+  --chat-capsule-tint: rgba(8, 9, 8, 0.82);
+  --chat-control-tint: rgba(24, 27, 25, 0.44);
+  --chat-glass-edge: rgba(241, 255, 246, 0.16);
+}
+
+/* Only the background layer is blurred. The avatar and text stay crisp. */
+.chat-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: calc(var(--chat-header-height) + env(safe-area-inset-top));
+  min-height: 0;
+  padding: calc(12px + env(safe-area-inset-top)) 72px 14px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: transparent;
+  border: 0;
+  isolation: isolate;
+  pointer-events: none;
+}
+.chat-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -18px;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.68) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    rgba(0, 0, 0, 0.7) 45%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    rgba(0, 0, 0, 0.7) 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+.header-progressive-blur {
+  display: none;
+  position: absolute;
+  inset: 0 0 -18px;
+  z-index: -1;
+  pointer-events: none;
+}
+.messages-app .chat-header .glass-round {
+  position: absolute;
+  top: calc(27px + env(safe-area-inset-top));
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  color: #f5f8f6;
+  background: rgba(53, 63, 56, 0.76);
+  border: 1px solid var(--chat-glass-edge);
+  box-shadow:
+    inset 0 1px 0 #ffffff13,
+    0 2px 8px #00000020;
+  pointer-events: auto;
+}
+.messages-app .chat-header .back-button {
+  left: max(16px, env(safe-area-inset-left));
+}
+.messages-app .chat-header .video-button {
+  right: max(16px, env(safe-area-inset-right));
+}
+.messages-app .chat-header .contact-heading {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  max-width: 100%;
+  min-width: 0;
+  background: none;
+  pointer-events: auto;
+}
+.chat-header .contact-avatar {
+  position: relative;
+  z-index: 2;
+}
+.messages-app .chat-header .contact-name-capsule {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: auto;
+  max-width: 100%;
+  min-height: 29px;
+  max-height: 29px;
+  margin-top: -2px;
+  padding: 4px 10px 4px 13px;
+  border-radius: 999px;
+  background: rgba(23, 28, 25, 0.92);
+  border: 1px solid rgba(235, 249, 240, 0.19);
+  box-shadow:
+    inset 0 1px 0 #ffffff13,
+    0 2px 7px #00000035;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  overflow: hidden;
+}
+.contact-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.contact-name-capsule svg {
+  color: #b6c0b9;
+}
+
+/* The scroll view extends behind the fixed glass; initial content clears it. */
+.message-scroll {
+  padding-top: calc(
+    var(--chat-header-height) + env(safe-area-inset-top) + 10px
+  );
+  scroll-padding-top: calc(
+    var(--chat-header-height) + env(safe-area-inset-top) + 10px
+  );
+}
+.message-scroll .sms-caption {
+  margin-top: 8px;
+}
+
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .chat-header::before {
+    background: linear-gradient(
+      to bottom,
+      var(--chat-header-tint),
+      rgba(0, 0, 0, 0.22) 50%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(var(--chat-header-blur-bottom)) saturate(1.08);
+    backdrop-filter: blur(var(--chat-header-blur-bottom)) saturate(1.08);
+  }
+  /* Overlapping soft masks progressively reduce blur without visible bands. */
+  .header-progressive-blur {
+    display: block;
+  }
+  .header-blur-middle {
+    -webkit-backdrop-filter: blur(var(--chat-header-blur-middle));
+    backdrop-filter: blur(var(--chat-header-blur-middle));
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 20%,
+      transparent 85%
+    );
+    mask-image: linear-gradient(to bottom, #000 0%, #000 20%, transparent 85%);
+  }
+  .header-blur-top {
+    -webkit-backdrop-filter: blur(var(--chat-header-blur-top));
+    backdrop-filter: blur(var(--chat-header-blur-top));
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 8%,
+      transparent 60%
+    );
+    mask-image: linear-gradient(to bottom, #000 0%, #000 8%, transparent 60%);
+  }
+  .messages-app .chat-header .glass-round {
+    background: var(--chat-control-tint);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    backdrop-filter: blur(16px) saturate(1.1);
+  }
+  .messages-app .chat-header .contact-name-capsule {
+    background: var(--chat-capsule-tint);
+    -webkit-backdrop-filter: blur(22px) saturate(1.08);
+    backdrop-filter: blur(22px) saturate(1.08);
+  }
+}

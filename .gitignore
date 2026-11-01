@@ -41,3 +41,11 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Local installation and validation artifacts
+.npm-cache/
+.baseline/
+baseline-dist/
+test-results/
+.browser-profile/
+.qa/
