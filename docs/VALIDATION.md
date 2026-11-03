@@ -48,3 +48,18 @@ node scripts/serve-preview.cjs
 ```
 
 This environment required `npm ci --ignore-scripts` because lifecycle subprocesses are restricted. Metro uses one worker. Existing outdated browser-dataset notices and Node's TypeScript module-detection notice are non-failing; dependencies were not upgraded to suppress them.
+
+## Personal persistence — 2026-11-03
+
+The website saves each browser profile's library under the existing `messages_simulator_v2` key. Existing visitors retain their data; there is no login or cross-device sync. Different people using the same browser profile share that profile's data.
+
+Validation completed for this change:
+
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm test`: all 31 tests passed, including concurrent contact/message changes, failure recovery, added chats and draft restoration.
+- `npm run build:web`: passed; Expo exported four static routes.
+- Happy DOM interaction check against the production export (`node .qa/persistence.mjs`): created a personal chat, saved and restored an unsent draft, sent the message and verified draft clearing, renamed the contact, reloaded and verified the saved name and message, switched back to another chat and restored its separate draft, and opened an independent browser context with none of the first visitor's additions. No runtime console errors were recorded.
+- `git diff --check`: passed.
+
+Happy DOM provides simulated DOM verification. Physical device behavior and real-browser visual checks were not exercised in this change. Contact editor drafts remain explicit-save: the checkmark commits edits and Cancel discards them.

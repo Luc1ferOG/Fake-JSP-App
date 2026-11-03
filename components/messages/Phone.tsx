@@ -22,6 +22,9 @@ export function Phone({
   onDeleteContact,
   onSettings,
   preferences,
+  onDraft,
+  onCreate,
+  saveStatus,
 }: {
   contact?: Conversation;
   contacts: Conversation[];
@@ -32,9 +35,16 @@ export function Phone({
   onDeleteContact: (id: string) => Promise<void>;
   onSettings: (id: string, settings: Partial<ContactSettings>) => Promise<void>;
   preferences?: DisplayPreferences;
+  onDraft: (text: string) => void;
+  onCreate: (name: string) => Promise<void>;
+  saveStatus: string;
 }) {
   const [page, setPage] = useState<"chat" | "list" | "info">("chat");
-  const [draft, setDraft] = useState("");
+  const draft = contact?.draft ?? "";
+  const [creating, setCreating] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [createError, setCreateError] = useState("");
+  const [createBusy, setCreateBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [search, setSearch] = useState("");
   const [now, setNow] = useState(0);
@@ -50,7 +60,6 @@ export function Phone({
   }, [draft, page]);
   useEffect(() => {
     setPage("chat");
-    setDraft("");
     nearBottom.current = true;
   }, [contact?.id]);
   useEffect(() => {
@@ -100,12 +109,39 @@ export function Phone({
           <div className="list-header">
             <span>Messages</span>
             <button
-              aria-label="Return to conversation"
-              onClick={() => contact && setPage("chat")}
+              aria-label="New conversation"
+              onClick={() => { setCreating(true); setCreateError(""); }}
             >
-              <Icon name="message" />
+              <Icon name="edit" />
             </button>
           </div>
+          <p className="save-status" role="status" title="Your chats and contacts are saved in this browser. Other browsers have their own data.">{saveStatus}</p>
+          {creating && (
+            <form className="new-conversation" onSubmit={async (event) => {
+              event.preventDefault();
+              if (!newName.trim() || createBusy) return;
+              setCreateBusy(true);
+              setCreateError("");
+              try {
+                await onCreate(newName);
+                setCreating(false);
+                setNewName("");
+                setSearch("");
+                setPage("chat");
+              } catch (error) {
+                setCreateError(error instanceof Error ? error.message : "Could not save the conversation.");
+              } finally { setCreateBusy(false); }
+            }}>
+              <label htmlFor="new-contact-name">Contact name or phone number</label>
+              <input id="new-contact-name" value={newName} disabled={createBusy}
+                onChange={(event) => setNewName(event.target.value)} required />
+              <div>
+                <button type="button" disabled={createBusy} onClick={() => { setCreating(false); setNewName(""); }}>Cancel</button>
+                <button type="submit" disabled={createBusy || !newName.trim()}>{createBusy ? "Saving…" : "Create chat"}</button>
+              </div>
+              {createError && <p role="alert">{createError}</p>}
+            </form>
+          )}
           <div className="phone-search">
             <Icon name="search" size={17} />
             <input
@@ -178,7 +214,6 @@ export function Phone({
               if (draft.trim()) {
                 nearBottom.current = true;
                 onSend(draft.trim());
-                setDraft("");
               }
             }}
           >
@@ -209,7 +244,7 @@ export function Phone({
                 rows={1}
                 placeholder="Text Message · SMS"
                 value={draft}
-                onChange={(e) => setDraft(e.target.value)}
+                onChange={(e) => onDraft(e.target.value)}
                 onKeyDown={(e) => {
                   if (
                     e.key === "Enter" &&

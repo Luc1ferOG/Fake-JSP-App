@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Head from "expo-router/head";
 import {
   initialLibrary,
+  conversation,
   Message,
   ticketMessage,
   uid,
@@ -18,7 +19,7 @@ import "./glass.css";
 import "./chat-header.css";
 
 export default function Simulator() {
-  const { library, setLibrary, ready, error, retry, retrySave, commit } =
+  const { library, setLibrary, ready, error, saved, retry, retrySave, commit } =
     useLibrary();
 
   const contact =
@@ -49,7 +50,7 @@ export default function Simulator() {
     setLibrary((v) => ({
       ...v,
       conversations: v.conversations.map((c) =>
-        c.id === contact.id ? { ...c, messages: [...c.messages, message] } : c,
+        c.id === contact.id ? { ...c, draft: message.direction === "outgoing" ? "" : c.draft, messages: [...c.messages, message] } : c,
       ),
     }));
   }
@@ -79,6 +80,17 @@ export default function Simulator() {
             <Phone
               contact={contact}
               contacts={library.conversations}
+              saveStatus={error ? "Changes need saving" : saved ? "Saved on this device" : "Saving…"}
+              onDraft={(draft) => {
+                if (!contact) return;
+                setLibrary((v) => ({ ...v, conversations: v.conversations.map((c) =>
+                  c.id === contact.id ? { ...c, draft } : c) }));
+              }}
+              onCreate={async (name) => {
+                const added = conversation(name.trim());
+                await commit((v) => ({ ...v, selectedId: added.id,
+                  conversations: [...v.conversations, added] }));
+              }}
               onSelect={(id) => setLibrary((v) => ({ ...v, selectedId: id }))}
               onSend={(text) =>
                 append({

@@ -33,6 +33,10 @@ The date and time come from the moment you press the button, using your device's
 
 The composer adds outgoing messages. Enter sends; Shift+Enter adds a line. Click the contact header for details or the back chevron for existing conversations. Messages remain stored locally. Existing v2 data and legacy `chat_messages` data are preserved.
 
+Personal saving uses this site's browser storage. Each browser profile/device has its own chats, added conversations, saved contact edits and photos, contact settings, selected conversation and unsent message drafts. Return using the same browser and site address to restore them. Separate people using the same browser profile share that profile's data. Clearing site data or ending a private browsing session removes it; there is no account or cross-device sync.
+
+From the conversation list, press the compose icon, enter a name or phone number, then choose **Create chat**. It opens only after the new conversation has been saved. Message drafts save automatically per conversation, survive reload and switching chats, and clear when sent. Contact edits still require the checkmark; Cancel discards them. The list displays save status, and failed saves show a retry action. Updates are serialized against the latest saved state so contact commits and rapid messages cannot overwrite one another. Unreadable existing data is preserved instead of replaced.
+
 ```sh
 npm run typecheck
 npm run lint
