@@ -21,6 +21,7 @@ export interface Conversation {
   avatar: string;
   date: number;
   messages: Message[];
+  draft?: string;
   profile?: ContactProfile;
   settings?: ContactSettings;
   contactDeleted?: boolean;
@@ -204,6 +205,7 @@ export function decodeLibrary(raw: string): Library {
       !Number.isFinite(c.date) ||
       isNaN(new Date(c.date).getTime()) ||
       !Array.isArray(c.messages) ||
+      (c.draft !== undefined && typeof c.draft !== "string") ||
       !c.messages.every(isMessage) ||
       new Set(c.messages.map((m) => m.id)).size !== c.messages.length
     )

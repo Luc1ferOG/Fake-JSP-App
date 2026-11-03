@@ -13,6 +13,7 @@ import {
   uid,
 } from "../lib/messages/model.ts";
 import { createSaveQueue } from "../lib/messages/saveQueue.ts";
+import { createLibrarySession } from "../lib/messages/librarySession.ts";
 import {
   contactDraft,
   contactSettings,
@@ -517,4 +518,60 @@ test("storage can save again after a quota or permissions failure", async () => 
   await assert.rejects(save("fail"));
   await save("recovered");
   assert.deepEqual(written, ["recovered"]);
+});
+
+test("contact commits and rapid message updates preserve every change in order", async () => {
+  const initial = initialLibrary();
+  let stored = "";
+  const session = createLibrarySession(initial, async (snapshot) => {
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    stored = snapshot;
+  }, () => {});
+  const added = conversation("Personal contact");
+  const add = session.change((v) => ({ ...v, conversations: [...v.conversations, added] }), true);
+  const edit = session.change((v) => saveContact(v, v.selectedId, {
+    ...contactDraft(v.conversations[0]), firstName: "Edited", lastName: "",
+  }), true);
+  const send = session.change((v) => ({ ...v, conversations: v.conversations.map((c, i) =>
+    i === 0 ? { ...c, messages: [...c.messages, { id: "sent", text: "Keep me", direction: "outgoing", timestamp: 1 }] } : c) }));
+  await Promise.all([add, edit, send]);
+  const restored = decodeLibrary(stored);
+  assert.ok(restored.conversations.some((c) => c.id === added.id));
+  assert.equal(restored.conversations[0].name, "Edited");
+  assert.equal(restored.conversations[0].messages.at(-1)?.text, "Keep me");
+});
+
+test("failed contact commits preserve the previous contact and retry preserves unsaved messages", async () => {
+  const initial = initialLibrary();
+  let fail = true;
+  let visible = initial;
+  let stored = "";
+  const session = createLibrarySession(initial, async (snapshot) => {
+    if (fail) throw new Error("quota");
+    stored = snapshot;
+  }, (value) => { visible = value; });
+  await assert.rejects(session.change((v) => ({ ...v, selectedId: "not-saved" }), true));
+  assert.equal(visible.selectedId, initial.selectedId);
+  await assert.rejects(session.change((v) => ({ ...v, conversations: v.conversations.map((c) => ({ ...c, draft: "Remember this" })) })));
+  assert.equal(visible.conversations[0].draft, "Remember this");
+  fail = false;
+  await session.retry();
+  assert.equal(decodeLibrary(stored).conversations[0].draft, "Remember this");
+});
+
+test("drafts, new chats and contact edits survive reload without changing another visitor's library", async () => {
+  const visitorA = initialLibrary();
+  const visitorB = initialLibrary();
+  const untouchedB = JSON.stringify(visitorB);
+  let storedA = "";
+  const session = createLibrarySession(visitorA, async (snapshot) => { storedA = snapshot; }, () => {});
+  const added = conversation("Only visitor A");
+  added.draft = "Unsent message";
+  await session.change((v) => ({ ...v, selectedId: added.id, conversations: [...v.conversations, added] }));
+  const reloaded = decodeLibrary(storedA);
+  assert.equal(reloaded.selectedId, added.id);
+  assert.equal(reloaded.conversations.at(-1)?.draft, "Unsent message");
+  assert.equal(JSON.stringify(visitorB), untouchedB);
+  const invalid = { ...added, draft: 42 };
+  assert.throws(() => decodeLibrary(JSON.stringify({ ...visitorA, conversations: [invalid] })));
 });
